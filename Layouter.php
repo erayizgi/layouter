@@ -69,18 +69,36 @@ class Layouter
         //array_push($this->pages,$page);
         if($data != NULL){
             $this->bindData($page,$data);
+            $this->bindMessage($page);
         }else{
             $this->pages[$page] = "";
+            $this->bindMessage($page);
         }
 
     }
 
+    public function setMessage($message, $type)
+    {
+        $this->ci->session->set_flashdata("error_message",$message);
+        $this->ci->session->set_flashdata("error_type",$type);
+    }
+
+    public function bindMessage($page)
+    {
+        if($this->ci->session->flashdata("error_message")){
+            $this->pages[$page]["data"]["error_message"] = $this->ci->session->flashdata("error_message");
+            $this->pages[$page]["data"]["error_type"] = $this->ci->session->flashdata("error_type");
+        }
+    }
     public function bindData($page, $data)
     {
         $this->pages[$page]["data"] = $data;
     }
+
+
     public function render()
     {
+
         $this->loadHeader();
         $this->loadPages($this->pages);
         $this->loadFooter();
